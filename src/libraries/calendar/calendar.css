@@ -1,0 +1,213 @@
+body{
+    background-color: white;
+    color: black;
+
+}
+.bjs-calendar-top-pane{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 22px;
+}
+.bjs-calendartop-left-div, .bjs-calendartop-right-div{
+    width: 25%;
+}
+.bjs-calendartop-center-div{
+    width: 50%;
+}
+
+.buchi-weeks{
+    border:1px solid #EBEBEB;
+    width: 400px;
+    /* height: 400px; */
+    padding: 10px;
+    /* margin-left: 100px; */
+    margin-top:30px;
+    float: left;
+}
+.week{
+    width: 100%;
+    display: flex;
+    
+}
+.day{
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+
+.bjs-calendar-top-month-div{
+    width: 80%;
+    float: left;
+    text-align: center;
+}
+.calendar-top-nav-div{
+    width: 20%;
+    float: left;
+}
+.day{
+    flex: 1 0 0%;
+}
+.day-date{
+    border-radius: 50%;
+    /* height: 80%; */
+    width: 80%;
+    aspect-ratio: 1 / 1;
+    margin:auto;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    pointer-events: all;
+    /* border: 1px solid black; */
+}
+
+.day-date:hover{
+    background-color: #89ABD9;
+}
+
+.day-date:active{
+    background-color: #002E66;
+}
+
+.bjs-calendar-prev, .bjs-calendar-next{
+    cursor: pointer;
+}
+
+#today{
+    background-color: #002E66;
+    color: white;
+}
+
+
+.buchi-schedule-div{
+    width: 400px;
+    float: left;
+    margin-left: 15px;
+}
+.buchi-schedule-set-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    border:1px solid #EBEBEB;
+    margin-top: 30px;
+    padding: 5px;
+}
+
+.buchi-add-icon-div{
+    background-color: #002E66;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
+.buchi-time-div{
+    width: 33%;
+}
+.buchi-arrow-div{
+   font-size: 30px;
+}
+.buchi-time-add-div{
+    text-align: center;
+    width: 30%;
+    padding: 15px 0 5px 0;
+    /* border: 1px solid skyblue; */
+    cursor: pointer;
+}
+
+.buchi-time-add-div:hover{
+    background-color: skyblue;
+}
+
+
+
+.buchi-time-add-text{
+    color: #002E66;
+    font-size: 12px;
+}
+
+.buchi-form-control{
+    border-radius: 5px;
+    padding: 5px 7px;
+}
+.buchi-alloted-time-div{
+    padding: 5px;
+    margin-top: 15px;
+}
+.buchi-schedules-title{
+    font-size: 23px;
+    color: #002E66;
+    /* line-height: 24px; */
+}
+.buchi-schedule{
+    border:1px solid #EBEBEB;
+    padding: 10px;
+}
+.buchi-schedule-day{
+    font-size: 21px;
+    color: #002E66;
+}
+.buchi-schedule-time-slots{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 3px;
+    padding: 3px 0 3px 3px;
+    cursor: pointer;
+}
+.buchi-schedule-time-slots:hover{
+    background-color: #89ABD9;
+}
+.buchi-schedule-time-slots:hover .buchi-schedule-time-range{
+    color: white;
+}
+.buchi-schedule-time-range{
+    display: flex;
+    float: left;
+    width: 80%;
+    justify-content: left;
+    text-align: left;
+    font-weight: bold;
+    color: grey;
+}
+.buchi-schedule-cancel-btn{
+    float: right;
+    width: 20%;
+    font-size: 10px;
+}
+.buchi-schedule-cancel-btn-icon{
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: #EB4335;
+    color: white;
+    text-align: center;
+    margin: auto;
+}
+
+.buchi-schedule-cancel-btn-text{
+    color: #EB4335;
+    text-align: center;
+}
+
+.buchi-schedule-start-time{
+    margin-right: 5px;
+}
+.buchi-schedule-end-time{
+    margin-left: 5px;
+}
+.buchi-schedule small{
+    font-size: 14px;
+    color: rgb(87, 133, 189);
+    font-weight: bold;
+}
