@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import {generateCalender} from './utils';
+import {generateCalender, removeDuplicates} from './utils';
+import BuchiCalendarUtils from "./BuchiCalendarUtils";
 
 
 const today = Date.now()/1000;
@@ -13,6 +14,7 @@ export const showPreviousMonth = (currentMonth) => {
     return generateCalender(currentMonth);
     // return showCalendar(currentMonth, calendarConfig);
 }
+
 
 const highLightDateRange = (range) => {
     const selectedDates = [];
@@ -80,7 +82,18 @@ const BuchiCalendar = ({calendarConfig}) => {
     const [currentRange, setCurrentRange] = useState([]);
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [highlightedDays, setHighlightedDays] = useState([]);
+    const [from, setFrom] = useState([]);
+    const [to, setTo] = useState([]);
+    const [selectedFrom, setSelectedFrom] = useState();
+    const [selectedTo, setSelectedTo] = useState();
     
+    const updateSelectedTo = (event)=>{
+        setSelectedTo(event.target.value)
+    }
+
+    const updateSelectedFrom = (event)=>{
+        setSelectedFrom(event.target.value)
+    }
 
     const buchiMouseDownHandler = (event, customHandler=null, disableDefault=null)=>{
         const startingPoint = event.target.getAttribute('start');
@@ -102,10 +115,21 @@ const BuchiCalendar = ({calendarConfig}) => {
         return [currentRangeClone, diff];
     }
 
+    // const findUnixFromHighlightedDays = (day) => {
+    //     // console.log(day)
+    //     return function(unix){
+    //         console.log(day)
+    //         console.log(unix)
+    //         return day.unix == unix
+    //     } 
+       
+    // }
     const buchiMouseUpHandler = (event, customHandler=null, disableDefault=null)=>{
         const getRangeEnding = endRange(event.target, currentRange);
     
         // Generate Array of highlighted days
+
+        
         let newHighlightedDays = [];
 
         let startingTime = getRangeEnding[0][0];
@@ -116,7 +140,7 @@ const BuchiCalendar = ({calendarConfig}) => {
                 unix: startingTime,
                 values: []
             });
-            
+
             setHighlightedDays(newHighlightedDays);
             startingTime = startingTime + 86400 //add 24 hours
         }
@@ -146,7 +170,9 @@ const BuchiCalendar = ({calendarConfig}) => {
         const range = [elementData.bjsData.rangeBoundary.lower, elementData.bjsData.rangeBoundary.upper]
 
         setCurrentRange(getRangeEnding[0]);
-    
+        
+        setFrom(getSlots(30, currentRange[0], '#buchi-from-select', -2, 2));
+        setTo(getSlots(30, currentRange[0], '#buchi-to-select', -1, 0));
         // showCalendarUtils(30, range[0], '#buchi-from-select', -2, 2);
         // showCalendarUtils(30, range[0], '#buchi-to-select', -1, 0);
             
@@ -163,7 +189,7 @@ const BuchiCalendar = ({calendarConfig}) => {
      const decreaseCurrentMonth = () => {
         let month = [currentMonth]
         month = parseInt(month[0]) - 1;
-        console.log(month)
+        // console.log(month)
         setCurrentMonth(month)
         // setHighlightedDays([]);
     }
@@ -171,27 +197,80 @@ const BuchiCalendar = ({calendarConfig}) => {
     const getSlots = (interval, timeStamp, targetElement, count, slotCountDiff) => {
         const slotCount = (24/interval) * 60
         // let slots = `<option value="">Pick Time</option>`;
-        let slots [];
+        let slots = [];
         while (count < slotCount-slotCountDiff) {//1440 is number of minutes in 24 hours
             const slotUnix = parseInt(timeStamp) + 60*interval*count;
-            
             const slotMicrosec = slotUnix * 1000;
             const date = new Date(slotMicrosec);
             const slotAm = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-            slots += `<option unix="${slotUnix}" value="${60*interval*count}">${slotAm}</option>`;
-
-            // slots.push({
-            //     lower: 
-            // });
+            slots.push({
+                unix: slotUnix,
+                value: 60*interval*count,
+                am_pm: slotAm
+            })
 
             count = count + 1;
         }
-        document.querySelector(targetElement).innerHTML = slots;
+        return slots;
+    }
+
+    const arrangeSchedule = () => {
+        let pickedSlots = [...selectedSlots]
+        highlightedDays.forEach(function(day){
+            let ms = new Date(parseInt(day.unix) * 1000)
+            let startOfDayInUnix = ms.setUTCHours(0,0,0,0)/1000;
+
+            const dayExists = pickedSlots.filter((ss)=>{
+                return ss.unix == startOfDayInUnix
+            });
+            
+            if(dayExists.length > 0 ){
+                const selectedIndex = pickedSlots.indexOf(dayExists[0])
+                console.log('yes');
+                 
+                pickedSlots[selectedIndex].values.push({
+                    from: parseInt(day.unix) + parseInt(selectedFrom),
+                    to: parseInt(day.unix) + parseInt(selectedTo),
+                });
+            }else{
+                
+                day.values.push({
+                    from: parseInt(day.unix) + parseInt(selectedFrom),
+                    to: parseInt(day.unix) + parseInt(selectedTo),
+                }); 
+                
+                pickedSlots.push(day);
+            }
+            
+             
+        // console.log(ms.setUTCHours(0,0,0,0)/1000);
+        });
+        
+        console.log(highlightedDays);
+
+
+
+        
+        // console.log(selectedSlots)
+        // log(highlightedDays)
+        // setSelectedSlots(removeDuplicates(pickedSlots.concat(removeDuplicates(highlightedDays))));
+        setSelectedSlots(pickedSlots);
     }
 
     useEffect(()=>{
         setCalendar(generateCalender(currentMonth));
-    }, [currentMonth])
+        
+    }, [currentMonth]);
+
+    useEffect(()=>{
+        // console.log(highlightedDays)
+    }, [highlightedDays]);
+
+    useEffect(()=>{
+        // console.log(selectedSlots)
+    }, [selectedSlots]);
+
+
     
     return (
         <>
@@ -238,37 +317,8 @@ const BuchiCalendar = ({calendarConfig}) => {
                     </div>
                 ))}
             </div>
-            <div className="buchi-schedule-div">
-                <div className="buchi-schedule-set-div">
-                    <div className="buchi-time-div">
-                        <label>From</label>
-                        <div>
-                            <select className="buchi-form-control" name="" id="buchi-from-select">
-                                <option value="">Pick Time</option>
-                                
-                            </select>
-                        </div>
-                    </div>
-                    <div><strong><i className="fa fa-long-arrow-right"></i></strong></div>
-                    <div className="buchi-time-div">
-                        <label>To</label>
-                        <div>
-                            <select className="buchi-form-control" name="" id="buchi-to-select">
-                                <option value="">Pick Time</option>
-                            
-                            </select>
-                        </div>
-                    </div>
-                    <div className="buchi-time-add-div" onClick={setSchedule}>
-                        <div className="buchi-add-icon-div"><i className="fa fa-plus"></i></div>
-                        <span className="buchi-time-add-text">Add Schedule</span>
-                    </div>
-                </div>
-                <div className="buchi-alloted-time-div">
-                    <h3 className="buchi-schedules-title">Your Schedules</h3>
-                    <div className="buchi-schedule"><p>No schedule</p></div>
-                </div>
-            </div>
+            
+            <BuchiCalendarUtils updateSelectedFrom={updateSelectedFrom} updateSelectedTo={updateSelectedTo} from={from} to={to} selectedSlots={selectedSlots} arrangeSchedule={arrangeSchedule} />
         </>
     )
 }
